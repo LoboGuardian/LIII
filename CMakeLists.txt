@@ -88,7 +88,7 @@ elseif (WIN32)
 	set(BINARY_INSTALL_DIR .)
 else ()
 	set (CLIENT_DATA_DIR "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}")
-	set(BINARY_INSTALL_DIR bin)
+	set(BINARY_INSTALL_DIR lib/${PROJECT_NAME})
 endif()
 
 # Setup testing utility for project

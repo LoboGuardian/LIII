@@ -538,6 +538,11 @@ INSTALL_RUNTIME_LIBRARIES()
 if(NOT APPLE AND UNIX)
 	install(FILES ${RESOURCE_OS} DESTINATION share/applications/)
 	install(FILES ${CMAKE_SOURCE_DIR}/resources/LIII/images/torrent.png  DESTINATION share/icons/hicolor/256x256/apps/)
+	# Install wrapper script to /usr/bin so Qt platform plugins are found at runtime
+	install(PROGRAMS ${CMAKE_SOURCE_DIR}/resources/liii.wrapper.sh
+		DESTINATION bin
+		RENAME liii
+	)
 	# Generate launcher script so Qt finds system plugins automatically
 	file(WRITE "${CMAKE_BINARY_DIR}/liii.sh.in"
 		"#!/bin/bash\n"
