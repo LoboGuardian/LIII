@@ -247,7 +247,11 @@ else()
 
 		set(Boost_USE_STATIC_RUNTIME ON)
 	endif()
-	set(Boost_USE_STATIC_LIBS ON)
+	if(WIN32)
+		set(Boost_USE_STATIC_LIBS ON)
+	else()
+		set(Boost_USE_STATIC_LIBS OFF)
+	endif()
 	add_library(torrent-rasterbar STATIC ${sources2})
 endif()
 
