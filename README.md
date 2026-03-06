@@ -1,6 +1,42 @@
 # LIII
 multi-platform bittorrent client
 
+## Linux (Fedora) build
+
+### Dependencies
+
+```bash
+sudo dnf install cmake gcc-c++ \
+    qt5-qtbase-devel qt5-linguist qt5-qtwayland \
+    boost-devel openssl-devel zlib-devel
+```
+
+### Build
+
+```bash
+make
+```
+
+Or manually:
+
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DDEVELOPER_TRAFFIC_CONTROL=OFF
+make -j$(nproc)
+```
+
+> `DEVELOPER_TRAFFIC_CONTROL=OFF` is required on Linux because the traffic control module depends on Qt private headers not available in the Fedora packages.
+
+### Run
+
+```bash
+./build/src/liii.sh
+```
+
+A `liii.sh` launcher script is generated automatically next to the binary. It sets `QT_PLUGIN_PATH` so Qt can find the platform plugins installed on the system.
+
+---
+
 ## Windows development/build environment:
 * CMake
 * Microsoft Visual Studio Community 2017 / Microsoft Visual C++ 2017
