@@ -538,6 +538,20 @@ INSTALL_RUNTIME_LIBRARIES()
 if(NOT APPLE AND UNIX)
 	install(FILES ${RESOURCE_OS} DESTINATION share/applications/)
 	install(FILES ${CMAKE_SOURCE_DIR}/resources/LIII/images/torrent.png  DESTINATION share/icons/hicolor/256x256/apps/)
+	# Generate launcher script so Qt finds system plugins automatically
+	file(WRITE "${CMAKE_BINARY_DIR}/liii.sh.in"
+		"#!/bin/bash\n"
+		"DIR=\"\$(cd \"\$(dirname \"\${BASH_SOURCE[0]}\")\" && pwd)\"\n"
+		"export QT_PLUGIN_PATH=/usr/lib64/qt5/plugins\n"
+		"exec \"\$DIR/LIII\" \"\$@\"\n"
+	)
+	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy
+			"${CMAKE_BINARY_DIR}/liii.sh.in"
+			"$<TARGET_FILE_DIR:${PROJECT_NAME}>/liii.sh"
+		COMMAND chmod +x "$<TARGET_FILE_DIR:${PROJECT_NAME}>/liii.sh"
+		COMMENT "Installing launcher script for Linux"
+	)
 endif(NOT APPLE AND UNIX)
 
 
