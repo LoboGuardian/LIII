@@ -1,0 +1,55 @@
+name: Release - Linux RPM
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          dnf install -y \
+            git cmake gcc-c++ \
+            qt5-qtbase-devel qt5-linguist qt5-qtwayland \
+            boost-devel openssl-devel zlib-devel \
+            rpm-build
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDEVELOPER_TRAFFIC_CONTROL=OFF
+
+      - name: Build
+        run: cmake --build build -j$(nproc)
+
+      - name: Package (RPM)
+        run: cd build && cpack -G RPM
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: liii-rpm
+          path: build/*.rpm
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/*.rpm
+          generate_release_notes: true

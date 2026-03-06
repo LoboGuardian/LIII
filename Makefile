@@ -5,7 +5,7 @@ BINARY      := $(BUILD_DIR)/src/LIII
 LAUNCHER    := $(BUILD_DIR)/src/liii.sh
 JOBS        := $(shell nproc)
 
-.PHONY: all configure build run clean distclean help
+.PHONY: all configure build run package clean distclean help
 
 all: build
 
@@ -21,6 +21,9 @@ build: configure
 run: build
 	$(LAUNCHER)
 
+package: build
+	cd $(BUILD_DIR) && cpack -G RPM
+
 clean:
 	$(MAKE) -C $(BUILD_DIR) clean
 
@@ -33,6 +36,7 @@ help:
 	@echo "  configure  Run CMake configuration"
 	@echo "  build      Compile the project"
 	@echo "  run        Build and launch LIII"
+	@echo "  package    Generate RPM package"
 	@echo "  clean      Remove compiled objects"
 	@echo "  distclean  Remove entire build directory"
 	@echo ""

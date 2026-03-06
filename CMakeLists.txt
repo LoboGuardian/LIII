@@ -314,3 +314,36 @@ set(FILES_TO_TRANSLATE
 
 set_property( GLOBAL PROPERTY USE_FOLDERS ON)
 add_subdirectory(src)
+
+###################################################
+###  SECTION CPack (Linux RPM/DEB packaging)
+###################################################
+
+if(NOT WIN32 AND NOT APPLE)
+	set(CPACK_PACKAGE_NAME              "${PROJECT_NAME}")
+	set(CPACK_PACKAGE_VENDOR            "${PROJECT_COMPANYNAME}")
+	set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Multi-platform BitTorrent client")
+	set(CPACK_PACKAGE_VERSION           "${PROJECT_VERSION}")
+	set(CPACK_PACKAGE_VERSION_MAJOR     "${PROJECT_VERSION_MAJOR}")
+	set(CPACK_PACKAGE_VERSION_MINOR     "${PROJECT_VERSION_MINOR}")
+	set(CPACK_PACKAGE_VERSION_PATCH     "${PROJECT_VERSION_PATCH}")
+	set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
+
+	# RPM specific
+	set(CPACK_GENERATOR                 "RPM")
+	set(CPACK_RPM_PACKAGE_LICENSE       "GPL-2.0")
+	set(CPACK_RPM_PACKAGE_GROUP         "Applications/Internet")
+	set(CPACK_RPM_PACKAGE_URL           "https://github.com/${PROJECT_COMPANYNAME}/${PROJECT_NAME}")
+	set(CPACK_RPM_PACKAGE_REQUIRES
+		"qt5-qtbase >= 5.12, qt5-qtwayland, boost >= 1.50, openssl, zlib"
+	)
+	set(CPACK_RPM_PACKAGE_DESCRIPTION
+		"LIII is a multi-platform BitTorrent client built with Qt5 and libtorrent-rasterbar."
+	)
+
+	include(CPack)
+endif()
+
+###################################################
+###  END OF SECTION CPack
+###################################################
