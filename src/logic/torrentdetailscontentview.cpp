@@ -15,14 +15,14 @@
 TorrentDetailsContentView::TorrentDetailsContentView(QWidget* parent /*= 0*/): QTreeView(parent)
 {
     setContextMenuPolicy(Qt::CustomContextMenu);
-    VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(on_showTreeTorentContextMenu(const QPoint&))));
+    VERIFY(connect(this, &TorrentDetailsContentView::customContextMenuRequested, this, &TorrentDetailsContentView::on_showTreeTorentContextMenu));
 }
 
 void TorrentDetailsContentView::setModel(TorrentContentFilterModel* a_model)
 {
     QTreeView::setModel(a_model);
 
-    VERIFY(connect(this, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(on_ItemOpenFolder())));
+    VERIFY(connect(this, &TorrentDetailsContentView::doubleClicked, this, &TorrentDetailsContentView::on_ItemOpenFolder));
 }
 
 TorrentContentFilterModel* TorrentDetailsContentView::model()
@@ -41,10 +41,10 @@ void TorrentDetailsContentView::on_showTreeTorentContextMenu(const QPoint& pos)
     TorrentContentModelItem* torrentItem = model()->getTorrentContentModelItem(index);
     QMenu menu;
     menu.setObjectName(QStringLiteral("TorrentDetailsContextMenu"));
-    menu.addAction(QIcon(), tr("Open in folder"), this, SLOT(on_ItemOpenFolder()));
+    menu.addAction(QIcon(), tr("Open in folder"), this, &TorrentDetailsContentView::on_ItemOpenFolder);
     if (!torrentItem->isFolder())
     {
-        menu.addAction(QIcon(), tr("Open File"), this, SLOT(on_ItemOpenFile()));
+        menu.addAction(QIcon(), tr("Open File"), this, &TorrentDetailsContentView::on_ItemOpenFile);
     }
 
     menu.exec(QCursor::pos());

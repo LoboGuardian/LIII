@@ -21,18 +21,18 @@ DownloadManager::DownloadManager(QObject* parent)
 {
     const auto model = &DownloadCollectionModel::instance();
 
-    VERIFY(connect(model, SIGNAL(signalDeleteURLFromModel(int, DownloadType::Type, int)),    SLOT(on_deleteTaskWithID(int, DownloadType::Type, int))));
-    VERIFY(connect(model, SIGNAL(signalPauseDownloadItemWithID(int, DownloadType::Type)),    SLOT(on_pauseTaskWithID(int, DownloadType::Type))));
-    VERIFY(connect(model, SIGNAL(signalContinueDownloadItemWithID(int, DownloadType::Type)), SLOT(startLoad())));
-    VERIFY(connect(model, SIGNAL(onDownloadStarted()),                                       SLOT(siftDownloads())));
-    VERIFY(connect(model, SIGNAL(onItemsReordered()),                                        SLOT(onItemsReordered())));
+    VERIFY(connect(model, &DownloadCollectionModel::signalDeleteURLFromModel, this, &DownloadManager::on_deleteTaskWithID));
+    VERIFY(connect(model, &DownloadCollectionModel::signalPauseDownloadItemWithID, this, &DownloadManager::on_pauseTaskWithID));
+    VERIFY(connect(model, &DownloadCollectionModel::signalContinueDownloadItemWithID, this, &DownloadManager::startLoad));
+    VERIFY(connect(model, &DownloadCollectionModel::onDownloadStarted, this, &DownloadManager::siftDownloads));
+    VERIFY(connect(model, &DownloadCollectionModel::onItemsReordered, this, &DownloadManager::onItemsReordered));
 
 #ifdef ALLOW_TRAFFIC_CONTROL
     VERIFY(connect(model, &DownloadCollectionModel::signalModelUpdated, this, &DownloadManager::UpdateSpeedLimits));
     setSpeedLimit(GetTrafficLimitActual());
 #endif // ALLOW_TRAFFIC_CONTROL
 
-    VERIFY(connect(&TorrentsListener::instance(), SIGNAL(signalTryNewtask()), SLOT(tryNewTask())));
+    VERIFY(connect(&TorrentsListener::instance(), &TorrentsListener::signalTryNewtask, this, &DownloadManager::tryNewTask));
 }
 
 DownloadManager::~DownloadManager()
@@ -138,9 +138,9 @@ bool DownloadManager::createNewTask(ItemDC& a_item)
     if (DownloadType::isDirectDownload(dlType))
     {
         DownloadTask* dlTask = new DownloadTask(a_item.getID(), a_item.initialURL(), this);
-        VERIFY(connect(dlTask, SIGNAL(signalDownloadFinished(int)),                  SLOT(onDownloadFinished(int))));
-        VERIFY(connect(dlTask, SIGNAL(signalTryNewtask()),                           SLOT(tryNewTask())));
-        VERIFY(connect(dlTask, SIGNAL(readyToDownload(int)),                         SLOT(startTaskDownload(int))));
+        VERIFY(connect(dlTask, &DownloadTask::signalDownloadFinished, this, &DownloadManager::onDownloadFinished));
+        VERIFY(connect(dlTask, &DownloadTask::signalTryNewtask, this, &DownloadManager::tryNewTask));
+        VERIFY(connect(dlTask, &DownloadTask::readyToDownload, this, &DownloadManager::startTaskDownload));
 
         dlTask->start();
         m_prepareTasks[a_item.getID()] = dlTask;

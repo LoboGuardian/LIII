@@ -49,7 +49,7 @@ DownloadCollectionTreeView::DownloadCollectionTreeView(QWidget* parent)
     setDragDropMode(QAbstractItemView::InternalMove);
 
     setContextMenuPolicy(Qt::CustomContextMenu);
-    VERIFY(connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), SLOT(on_showContextMenu(const QPoint&))));
+    VERIFY(connect(this, &DownloadCollectionTreeView::customContextMenuRequested, this, &DownloadCollectionTreeView::on_showContextMenu));
 }
 
 DownloadCollectionTreeView::~DownloadCollectionTreeView()
@@ -86,15 +86,15 @@ void DownloadCollectionTreeView::setModel(DownloadCollectionModel* a_model)
 {
     QTreeView::setModel(a_model);
 
-    VERIFY(connect(this, SIGNAL(clicked(const QModelIndex&)), SLOT(on_clicked(const QModelIndex&))));
-    VERIFY(connect(this, SIGNAL(doubleClicked(const QModelIndex&)), SLOT(on_doubleClicked(const QModelIndex&))));
-    VERIFY(connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-                   SLOT(on_ItemSelectChanged(const QItemSelection&, const QItemSelection&))));
+    VERIFY(connect(this, &DownloadCollectionTreeView::clicked, this, &DownloadCollectionTreeView::on_clicked));
+    VERIFY(connect(this, &DownloadCollectionTreeView::doubleClicked, this, &DownloadCollectionTreeView::on_doubleClicked));
+    VERIFY(connect(selectionModel(), &QItemSelectionModel::selectionChanged,
+                   this, &DownloadCollectionTreeView::on_ItemSelectChanged));
 
-    VERIFY(connect(a_model, SIGNAL(existingItemAdded(const QModelIndex&)), SLOT(onExistingItemAdded(const QModelIndex&))));
-    VERIFY(connect(a_model, SIGNAL(statusChanged()), SLOT(getUpdateItem())));
+    VERIFY(connect(a_model, &DownloadCollectionModel::existingItemAdded, this, &DownloadCollectionTreeView::onExistingItemAdded));
+    VERIFY(connect(a_model, &DownloadCollectionModel::statusChanged, this, &DownloadCollectionTreeView::getUpdateItem));
 
-    VERIFY(connect(a_model, SIGNAL(downloadingFinished(const ItemDC&)), SLOT(downloadingFinished(const ItemDC&))));
+    VERIFY(connect(a_model, &DownloadCollectionModel::downloadingFinished, this, &DownloadCollectionTreeView::downloadingFinished));
 
     header()->setSectionsMovable(false);
     setSortingEnabled(false);
@@ -309,7 +309,7 @@ void DownloadCollectionTreeView::on_showContextMenu(const QPoint& a_point)
 
         const auto dlType = model()->getItem(index)->downloadType();
         // Show In Folder menu item
-        QAction* openFolder = menu.addAction(QIcon(":/icons/Drop-down-folder-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_OPENFOLDER), this, SLOT(on_OpenFolder()));
+        QAction* openFolder = menu.addAction(QIcon(":/icons/Drop-down-folder-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_OPENFOLDER), this, &DownloadCollectionTreeView::on_OpenFolder);
         openFolder->setEnabled(dlType != DownloadType::MagnetLink);
 
         if (dlType == DownloadType::TorrentFile)
@@ -321,31 +321,31 @@ void DownloadCollectionTreeView::on_showContextMenu(const QPoint& a_point)
         // Torrent Details menu item
         if (DownloadType::isTorrentDownload(dlType))
         {
-            menu.addAction(QIcon(":/icons/Drop-down-torrent-icon-normal.png"), utilities::Tr::Tr(TORRENT_DETAILS_INFO), this, SLOT(on_showTorrentDetails()))
+            menu.addAction(QIcon(":/icons/Drop-down-torrent-icon-normal.png"), utilities::Tr::Tr(TORRENT_DETAILS_INFO), this, &DownloadCollectionTreeView::on_showTorrentDetails)
             ->setEnabled(dlType == DownloadType::TorrentFile);
         }
 
         menu.addSeparator();
         // Download Control section: start, pause, stop, remove, cancel
-        QAction* re = menu.addAction(QIcon(":/icons/Drop-down-start-icon-normal.png"), utilities::Tr::Tr(START_LABEL), this, SLOT(on_ItemResume()));
-        QAction* pa = menu.addAction(QIcon(":/icons/Drop-down-pause-icon-normal.png"),  utilities::Tr::Tr(PAUSE_LABEL) ,  this, SLOT(on_ItemPause()));
+        QAction* re = menu.addAction(QIcon(":/icons/Drop-down-start-icon-normal.png"), utilities::Tr::Tr(START_LABEL), this, &DownloadCollectionTreeView::on_ItemResume);
+        QAction* pa = menu.addAction(QIcon(":/icons/Drop-down-pause-icon-normal.png"),  utilities::Tr::Tr(PAUSE_LABEL) ,  this, &DownloadCollectionTreeView::on_ItemPause);
 
         auto prc = canPRCSEnabled();
         if (std::get<2>(prc)) // can Cancel?
         {
-            menu.addAction(QIcon(":/icons/Drop-down-cancel-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_CANCEL), this, SLOT(on_ItemCancel()));
+            menu.addAction(QIcon(":/icons/Drop-down-cancel-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_CANCEL), this, &DownloadCollectionTreeView::on_ItemCancel);
         }
         else
         {
-            menu.addAction(QIcon(":/icons/Drop-down-clean-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_REMOVE), this, SLOT(on_ItemCancel()));
+            menu.addAction(QIcon(":/icons/Drop-down-clean-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_REMOVE), this, &DownloadCollectionTreeView::on_ItemCancel);
         }
 
         pa->setEnabled(std::get<0>(prc));
         re->setEnabled(std::get<1>(prc));
 
         menu.addSeparator();
-        menu.addAction(QIcon(":/icons/Drop-down-up-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_MOVEUP), this, SLOT(on_MoveUp()));
-        menu.addAction(QIcon(":/icons/Drop-down-down-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_MOVEDOWN), this, SLOT(on_MoveDown()));
+        menu.addAction(QIcon(":/icons/Drop-down-up-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_MOVEUP), this, &DownloadCollectionTreeView::on_MoveUp);
+        menu.addAction(QIcon(":/icons/Drop-down-down-icon-normal.png"), utilities::Tr::Tr(TREEVIEW_MENU_MOVEDOWN), this, &DownloadCollectionTreeView::on_MoveDown);
 
         menu.exec(cursorPos);
     }
