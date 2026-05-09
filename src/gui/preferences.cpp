@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QCoreApplication>
 #include <QDir>
+#include <QRegularExpressionValidator>
 #include <QDebug>
 
 #ifdef DEVELOPER_FEATURES
@@ -89,7 +90,7 @@ Preferences::Preferences(QWidget* parent, TAB tab)
     VERIFY(connect(ui->editProxyPassword, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
 
     const auto Octet = QStringLiteral("(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
-    ui->leProxyAddress->setValidator(new QRegExpValidator(QRegExp("^" + Octet + "\\." + Octet + "\\." + Octet + "\\." + Octet + "$"), this));
+    ui->leProxyAddress->setValidator(new QRegularExpressionValidator(QRegularExpression("^" + Octet + "\\." + Octet + "\\." + Octet + "\\." + Octet + "$"), this));
     ui->leProxyPort->setValidator(new QIntValidator(1, maxPort, this));
 
     ui->tabWidget->setCurrentIndex(tab);

@@ -23,6 +23,7 @@
 #include <QScrollBar>
 #include <QStatusBar>
 #include <QStorageInfo>
+#include <QRegularExpression>
 
 #include "utilities/credential.h"
 #include "utilities/utils.h"
@@ -547,22 +548,22 @@ void MainWindow::dragEnterEvent(QDragEnterEvent* event)
 void MainWindow::dropEvent(QDropEvent* event)
 {
     QString text;
-    QRegExp intrestedDataRx;
+    QRegularExpression intrestedDataRx;
 
     if (event->mimeData()->hasHtml())
     {
         text = event->mimeData()->html();
-        intrestedDataRx = QRegExp("(http|ftp|file|magnet|[a-z]):[^\"'<>\\s\\n]+", Qt::CaseInsensitive);
+        intrestedDataRx = QRegularExpression("(http|ftp|file|magnet|[a-z]):[^\"'<>\\s\\n]+", QRegularExpression::CaseInsensitiveOption);
     }
     else if (event->mimeData()->hasText())
     {
         text = event->mimeData()->text();
-        intrestedDataRx = QRegExp("(http|ftp|file|magnet|[a-z]):[^\\s\\n]+", Qt::CaseInsensitive);
+        intrestedDataRx = QRegularExpression("(http|ftp|file|magnet|[a-z]):[^\\s\\n]+", QRegularExpression::CaseInsensitiveOption);
     }
     else if (event->mimeData()->hasFormat("text/uri-list"))
     {
         text = event->mimeData()->data("text/uri-list");
-        intrestedDataRx = QRegExp("(http|ftp|file|magnet|[a-z]):[^\\s\\n]+", Qt::CaseInsensitive);
+        intrestedDataRx = QRegularExpression("(http|ftp|file|magnet|[a-z]):[^\\s\\n]+", QRegularExpression::CaseInsensitiveOption);
     }
     else
     {
@@ -571,14 +572,14 @@ void MainWindow::dropEvent(QDropEvent* event)
 
     qDebug() << "Some data dropped to program. Trying to manage it.";
 
-    int pos = 0;
     QStringList linksForDownload;
-    while ((pos = intrestedDataRx.indexIn(text, pos)) != -1)
+    auto it = intrestedDataRx.globalMatch(text);
+    while (it.hasNext())
     {
-        QString someLink = intrestedDataRx.cap(0);
-        QString typeOfLink = intrestedDataRx.cap(1);
+        auto match = it.next();
+        QString someLink = match.captured(0);
+        QString typeOfLink = match.captured(1);
         qDebug() << QString(PROJECT_NAME) + " takes " + someLink;
-        pos += intrestedDataRx.matchedLength();
 
 
         if (typeOfLink == "file")
