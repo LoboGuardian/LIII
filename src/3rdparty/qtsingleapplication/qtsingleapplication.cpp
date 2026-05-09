@@ -42,6 +42,7 @@
 #include "qtsingleapplication.h"
 #include "qtlocalpeer.h"
 #include <QWidget>
+#include <QGuiApplication>
 
 
 /*!
@@ -324,8 +325,11 @@ void QtSingleApplication::activateWindow()
 {
     if (actWin) {
         actWin->setWindowState(actWin->windowState() & ~Qt::WindowMinimized);
-        actWin->raise();
-        actWin->activateWindow();
+        if (QGuiApplication::platformName() != QStringLiteral("wayland"))
+        {
+            actWin->raise();
+            actWin->activateWindow();
+        }
     }
 }
 
