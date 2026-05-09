@@ -1,17 +1,5 @@
 project(Utilities)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_definitions(
-	-DNOMINMAX 
-	-D_CRT_SECURE_NO_WARNINGS 
-	-D_CRT_NONSTDC_NO_WARNINGS 
-	-DSILENT
-)
-
 
 set(HEADERS_TOMOC
 	authentication_helper.h
@@ -104,7 +92,20 @@ add_library(Utilities STATIC
 	${HEADERS}
 	${SOURCES}
 	${MOC_FILES}
-)	
+)
+
+target_include_directories(Utilities PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_compile_definitions(Utilities PRIVATE
+	NOMINMAX
+	_CRT_SECURE_NO_WARNINGS
+	_CRT_NONSTDC_NO_WARNINGS
+	SILENT
+)
 
 if(APPLE)
 	add_dependencies(Utilities 

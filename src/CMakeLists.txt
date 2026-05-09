@@ -7,7 +7,7 @@ endif(POLICY CMP0020)
 ###  SECTION Paths
 ###################################################
 
-include_directories(
+set(LIII_INCLUDE_DIRS
 	${CMAKE_CURRENT_SOURCE_DIR}/main
 	${CMAKE_CURRENT_SOURCE_DIR}/gui
 	${CMAKE_CURRENT_SOURCE_DIR}/logic
@@ -34,7 +34,6 @@ include_directories(
 add_subdirectory(3rdparty/qtsingleapplication)
 
 	find_package(TorrentRasterbar REQUIRED)
-	include_directories(${TORRENT_INCLUDE_DIR})
 
 if(APPLE)
 	add_subdirectory(common/darwin)
@@ -407,6 +406,11 @@ target_link_libraries(${FUNCTIONAL_MODULE}
 	${PROJECT_LIBRARIES}
 )
 
+target_include_directories(${FUNCTIONAL_MODULE} PRIVATE
+	${LIII_INCLUDE_DIRS}
+	${TORRENT_INCLUDE_DIR}
+)
+
 source_group(main FILES
 	${RESOURCE_OS}
 	main/main.cpp
@@ -425,6 +429,11 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	${QTX_QTMAIN_LIBRARY}
 	${FUNCTIONAL_MODULE}
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+	${LIII_INCLUDE_DIRS}
+	${TORRENT_INCLUDE_DIR}
 )
 
 if(DEVELOPER_BUILD_TESTS)

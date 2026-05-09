@@ -1,17 +1,5 @@
 project(Download)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
-
-add_definitions(
-	-DNOMINMAX 
-	-D_CRT_SECURE_NO_WARNINGS 
-	-D_CRT_NONSTDC_NO_WARNINGS 
-	-DSILENT
-)
-
 set(HEADERS_DETAIL
 	detail/downloader_base.h
 	detail/downloader_signal_catchers.h
@@ -48,7 +36,20 @@ add_library(Download STATIC
 	${HEADERS_DETAIL}
 	${HEADERS}
 	${SOURCES}
-)	
+)
+
+target_include_directories(Download PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_compile_definitions(Download PRIVATE
+	NOMINMAX
+	_CRT_SECURE_NO_WARNINGS
+	_CRT_NONSTDC_NO_WARNINGS
+	SILENT
+)
 
 if(DEVELOPER_TRAFFIC_CONTROL)
 	add_dependencies(Download Traffic_Limitation)

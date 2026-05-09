@@ -142,7 +142,7 @@ QWidget* PropListDelegate::createEditor(QWidget* parent, const QStyleOptionViewI
         editor->addItem(tr("Mixed", "Mixed (priority)"));
     }
 
-    VERIFY(connect(editor, QOverload<int>::of(&QComboBox::currentIndexChanged), parent, &QWidget::setFocus));
+    VERIFY(connect(editor, QOverload<int>::of(&QComboBox::currentIndexChanged), parent, [parent](int) { parent->setFocus(); }));
 
     return editor;
 }

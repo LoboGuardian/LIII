@@ -292,7 +292,7 @@ TorrentManager::TorrentManager()
     }
 
     // Regular saving of fastresume data
-    VERIFY(connect(&m_resumeDataTimer, &QTimer::timeout, this, &TorrentManager::cacheResumeTorrentsData));
+    VERIFY(connect(&m_resumeDataTimer, &QTimer::timeout, this, [this]() { cacheResumeTorrentsData(); }));
     m_resumeDataTimer.setSingleShot(false);
     m_resumeDataTimer.start(200000); // 3.3min
     connect(&m_statsTimer, &QTimer::timeout,

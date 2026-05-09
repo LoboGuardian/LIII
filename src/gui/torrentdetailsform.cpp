@@ -164,7 +164,6 @@ void TorrentDetailsForm::initTorrentContentTab()
     ui->treeTorrentContent->header()->resizeSection(TorrentContentModelItem::COL_PROGRESS, 100);
 
     VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, this, &TorrentDetailsForm::updateDiskSpaceLabel));
-    VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, ui->treeTorrentContent, &QAbstractItemView::updateEditorData));
 
     ui->treeTorrentContent->header()->setSortIndicator(TorrentContentModelItem::COL_NAME, Qt::AscendingOrder);
 }

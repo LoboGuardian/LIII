@@ -1,29 +1,5 @@
 project(Traffic_Limitation)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-	${ZLIB_INCLUDE_DIR}
-)
-
-if(APPLE)
-	include_directories(
-		${QT_INCLUDE_DIR}/../../src/network/access
-		${QT_INCLUDE_DIR}/../../include/QtCore
-	)
-endif(APPLE)
-
-if(WIN32)
-	include_directories(
-		${QT_INCLUDE_DIR}/../src/network/access
-	)
-endif(WIN32)
-
-	include_directories(
-		${Qt5Network_PRIVATE_INCLUDE_DIRS}
-		${Qt5Core_PRIVATE_INCLUDE_DIRS}
-	)
-
 set(HEADERS_TOMOC
 	InterceptTimer.h
 	NetworkReplyAdaptor.h
@@ -61,6 +37,32 @@ add_library(Traffic_Limitation STATIC
 	${HEADERS} 
 	${SOURCES}
 	${MOC_FILES}
+)
+
+target_include_directories(Traffic_Limitation PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+	${CMAKE_CURRENT_SOURCE_DIR}/../../3rdparty
+	${ZLIB_INCLUDE_DIR}
+)
+
+if(APPLE)
+	target_include_directories(Traffic_Limitation PRIVATE
+		${QT_INCLUDE_DIR}/../../src/network/access
+		${QT_INCLUDE_DIR}/../../include/QtCore
+	)
+endif()
+
+if(WIN32)
+	target_include_directories(Traffic_Limitation PRIVATE
+		${QT_INCLUDE_DIR}/../src/network/access
+	)
+endif()
+
+target_include_directories(Traffic_Limitation PRIVATE
+	${Qt5Network_PRIVATE_INCLUDE_DIRS}
+	${Qt5Core_PRIVATE_INCLUDE_DIRS}
 )
 
 add_dependencies(Traffic_Limitation

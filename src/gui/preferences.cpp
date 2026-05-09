@@ -10,7 +10,6 @@
 #include <QDir>
 #include <QRegularExpressionValidator>
 #include <QDebug>
-#include <QOverload>
 
 #ifdef DEVELOPER_FEATURES
 #include <QKeyEvent>
@@ -71,14 +70,14 @@ Preferences::Preferences(QWidget* parent, TAB tab)
 
     VERIFY(connect(ui->cbEnableDarkMode, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(this, &Preferences::anyDataChanged, this, &Preferences::dataChanged));
+    VERIFY(connect(this, &Preferences::anyDataChanged, this, [this]() { dataChanged(); }));
 
     VERIFY(connect(ui->torrentAssociateCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
     VERIFY(connect(ui->magnetAssociateCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
     VERIFY(connect(ui->torrentPortSettingEdit, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
-    VERIFY(connect(ui->torrentSpeedUploadLimitSpin, QOverload<QString>::of(&QSpinBox::valueChanged), this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->torrentSpeedUploadLimitSpin, qOverload<int>(&QSpinBox::valueChanged), this, &Preferences::anyDataChanged));
     VERIFY(connect(ui->torrentStartAsSequel, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
     VERIFY(connect(ui->torrentSpeedLimitedCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 

@@ -1,10 +1,5 @@
 project(ui_utils)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
-
 
 set(SRCS
 	getstyleoptionprogressbar.cpp
@@ -45,7 +40,13 @@ add_library(ui_utils STATIC
 	${HDRS}
 	${HDRS_MOC}
 	${MOC_FILES} 
-)	
+)
+
+target_include_directories(ui_utils PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/..
+)
 
 set(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE}
 	${CMAKE_CURRENT_SOURCE_DIR}/mainwindowwithtray.cpp

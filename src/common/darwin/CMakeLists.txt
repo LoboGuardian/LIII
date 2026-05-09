@@ -1,10 +1,5 @@
 project(Darwin)
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-	${CMAKE_CURRENT_BINARY_DIR}
-)
-
 set(HEADERS_TOMOC
 	DarwinSingleton.h
 	AppHandler.h
@@ -42,6 +37,11 @@ add_library(Darwin STATIC
 	${HEADERS_TOMOC} 
 	${HEADERS}
 	${SOURCES}
+)
+
+target_include_directories(Darwin PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY FOLDER "common")
