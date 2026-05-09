@@ -218,3 +218,31 @@ ipch/
 build64/
 Output/
 .vs/
+
+#################
+## CPack
+#################
+_CPack_Packages/
+*.rpm
+*.deb
+
+#################
+## Qt Creator
+#################
+CMakeLists.txt.user*
+*.autosave
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+
+#################
+## CLion
+#################
+.idea/
+cmake-build-*/
+
+#################
+## KDevelop
+#################
+*.kdev4
+.kateproject
