@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QRegularExpressionValidator>
 #include <QDebug>
+#include <QOverload>
 
 #ifdef DEVELOPER_FEATURES
 #include <QKeyEvent>
@@ -55,39 +56,39 @@ Preferences::Preferences(QWidget* parent, TAB tab)
 
     setWindowFlags(Qt::Dialog | Qt::WindowTitleHint | Qt::WindowCloseButtonHint);
 
-    VERIFY(connect(ui->buttonOK, SIGNAL(clicked()), SLOT(accept())));
-    VERIFY(connect(ui->buttonApply, SIGNAL(clicked()), SLOT(apply())));
-    VERIFY(connect(ui->buttonCancel, SIGNAL(clicked()), SLOT(reject())));
+    VERIFY(connect(ui->buttonOK, &QPushButton::clicked, this, &Preferences::accept));
+    VERIFY(connect(ui->buttonApply, &QPushButton::clicked, this, &Preferences::apply));
+    VERIFY(connect(ui->buttonCancel, &QPushButton::clicked, this, &QDialog::reject));
 
     //handle data changes signals
-    VERIFY(connect(ui->comboBoxLanguage, SIGNAL(currentIndexChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->sbMaxNum, SIGNAL(valueChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->sbTrafficLimit, SIGNAL(valueChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->cbTrafficLimit, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->leFolder, SIGNAL(textEdited(const QString&)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->maximumNumberLoads, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->cbHideAllTrayNotification, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->comboBoxLanguage, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->sbMaxNum, QOverload<int>::of(&QSpinBox::valueChanged), this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->sbTrafficLimit, QOverload<int>::of(&QSpinBox::valueChanged), this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->cbTrafficLimit, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->leFolder, &QLineEdit::textEdited, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->maximumNumberLoads, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->cbHideAllTrayNotification, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(ui->cbEnableDarkMode, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->cbEnableDarkMode, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(this, SIGNAL(anyDataChanged()), SLOT(dataChanged())));
+    VERIFY(connect(this, &Preferences::anyDataChanged, this, &Preferences::dataChanged));
 
-    VERIFY(connect(ui->torrentAssociateCheckbox, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->torrentAssociateCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(ui->magnetAssociateCheckbox, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->magnetAssociateCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(ui->torrentPortSettingEdit, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->torrentSpeedUploadLimitSpin, SIGNAL(valueChanged(QString)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->torrentStartAsSequel, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->torrentSpeedLimitedCheckbox, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->torrentPortSettingEdit, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->torrentSpeedUploadLimitSpin, QOverload<QString>::of(&QSpinBox::valueChanged), this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->torrentStartAsSequel, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->torrentSpeedLimitedCheckbox, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(ui->chbUseProxy, SIGNAL(stateChanged(int)), this, SLOT(onProxyStateChanged(int))));
-    VERIFY(connect(ui->leProxyAddress, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->leProxyPort, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->chbUseProxy, &QCheckBox::stateChanged, this, &Preferences::onProxyStateChanged));
+    VERIFY(connect(ui->leProxyAddress, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->leProxyPort, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
 
-    VERIFY(connect(ui->chbProxyUserAuthorization, SIGNAL(stateChanged(int)), this, SLOT(onProxyAuthorizationStateChanged(int))));
-    VERIFY(connect(ui->editProxyLogin, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
-    VERIFY(connect(ui->editProxyPassword, SIGNAL(textChanged(QString)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->chbProxyUserAuthorization, &QCheckBox::stateChanged, this, &Preferences::onProxyAuthorizationStateChanged));
+    VERIFY(connect(ui->editProxyLogin, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
+    VERIFY(connect(ui->editProxyPassword, &QLineEdit::textChanged, this, &Preferences::anyDataChanged));
 
     const auto Octet = QStringLiteral("(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])");
     ui->leProxyAddress->setValidator(new QRegularExpressionValidator(QRegularExpression("^" + Octet + "\\." + Octet + "\\." + Octet + "\\." + Octet + "$"), this));
@@ -102,7 +103,7 @@ Preferences::Preferences(QWidget* parent, TAB tab)
 #ifdef Q_OS_WIN
     ::Tr::SetTr(ui->startLIIIOnStartingWindows, &QCheckBox::setText, START_LIII_ON_STARTING_WINDOWS_LABEL, PROJECT_NAME);
     ui->startLIIIOnStartingWindows->setChecked(m_startLIIIOnStartingWindows);
-    VERIFY(connect(ui->startLIIIOnStartingWindows, SIGNAL(stateChanged(int)), SIGNAL(anyDataChanged())));
+    VERIFY(connect(ui->startLIIIOnStartingWindows, &QCheckBox::stateChanged, this, &Preferences::anyDataChanged));
 #else
     ui->startLIIIOnStartingWindows->hide();
 
