@@ -197,16 +197,14 @@ bool MoveToTrash(const QString& path) {return MoveToTrashImpl(path);}
 bool DeleteFileWithWaiting(const QString& file)
 {
     qDebug() << __FUNCTION__ << " deleting file: " << file;
-    if (QFile::exists(file) && !QFile::remove(file))
+    for (int i = 0; i < 3; ++i)
     {
-        QThread::yieldCurrentThread();
-        if (!QFile::remove(file))
-        {
-            qDebug() << __FUNCTION__ << " failed with " << file;
-            return false;
-        }
+        if (!QFile::exists(file) || QFile::remove(file))
+            return true;
+        QThread::msleep(10);
     }
-    return true;
+    qDebug() << __FUNCTION__ << " failed with " << file;
+    return false;
 }
 
 void SelectFile(const QString& fileName, const QString& defFolderName)
