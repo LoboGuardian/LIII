@@ -1,6 +1,10 @@
 name: CI - Windows
 
 on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
   workflow_dispatch:
 
 permissions: {}
@@ -32,6 +36,9 @@ jobs:
 
     env:
       boost_path: "${{ github.workspace }}/../boost"
+      BOOST_MAJOR_VERSION: "1"
+      BOOST_MINOR_VERSION: "86"
+      BOOST_PATCH_VERSION: "0"
 
     steps:
       - name: Checkout repository
@@ -48,11 +55,15 @@ jobs:
           where.exe ninja
           ninja --version
 
+      - name: Cache Boost
+        id: cache-boost
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.boost_path }}
+          key: boost-${{ env.BOOST_MAJOR_VERSION }}_${{ env.BOOST_MINOR_VERSION }}_${{ env.BOOST_PATCH_VERSION }}-${{ matrix.boost_arch }}
+
       - name: Install boost
-        env:
-          BOOST_MAJOR_VERSION: "1"
-          BOOST_MINOR_VERSION: "86"
-          BOOST_PATCH_VERSION: "0"
+        if: steps.cache-boost.outputs.cache-hit != 'true'
         run: |
           $boost_url="https://archives.boost.io/release/${{ env.BOOST_MAJOR_VERSION }}.${{ env.BOOST_MINOR_VERSION }}.${{ env.BOOST_PATCH_VERSION }}/source/boost_${{ env.BOOST_MAJOR_VERSION }}_${{ env.BOOST_MINOR_VERSION }}_${{ env.BOOST_PATCH_VERSION }}.tar.gz"
           $boost_url2="https://sourceforge.net/projects/boost/files/boost/${{ env.BOOST_MAJOR_VERSION }}.${{ env.BOOST_MINOR_VERSION }}.${{ env.BOOST_PATCH_VERSION }}/boost_${{ env.BOOST_MAJOR_VERSION }}_${{ env.BOOST_MINOR_VERSION }}_${{ env.BOOST_PATCH_VERSION }}.tar.gz"
