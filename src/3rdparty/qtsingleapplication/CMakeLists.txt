@@ -14,22 +14,22 @@ set(HEADERS_TOMOC_
 )
 
 set(HEADERS_
-	QtLockedFile
-	QtSingleApplication
+	qtlockedfile.h
 )
 
 set(SOURCES_
 	qtlocalpeer.cpp
 	qtsingleapplication.cpp
 	qtsinglecoreapplication.cpp
+	qtlockedfile.cpp
 )
 
-#if(UNIX)
-#	set(SOURCES_
-#		${SOURCES_}
-#		qtlockedfile_unix.cpp
-#	)
-#endif(UNIX)
+if(UNIX)
+	set(SOURCES_
+		${SOURCES_}
+		qtlockedfile_unix.cpp
+	)
+endif(UNIX)
 
 source_group("sources" FILES
 	${HEADERS_TOMOC_}
