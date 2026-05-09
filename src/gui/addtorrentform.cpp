@@ -240,7 +240,8 @@ int AddTorrentForm::exec()
         SetForegroundWindow((HWND)mwWinId);
     }
 #else
-    activateWindow();
+    if (!utilities::isWayland())
+        activateWindow();
 #endif
 
     return QDialog::exec();
