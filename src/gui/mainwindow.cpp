@@ -132,47 +132,47 @@ MainWindow::MainWindow()
 
     DownloadCollectionModel* pModel = &DownloadCollectionModel::instance();
 
-    VERIFY(connect(pModel, SIGNAL(signalDeleteURLFromModel(int,DownloadType::Type,int)), SLOT(refreshButtons())));
-    VERIFY(connect(pModel, SIGNAL(activeDownloadsNumberChanged(int)), SLOT(onActiveDownloadsNumberChanged(int))));
+    VERIFY(connect(pModel, &DownloadCollectionModel::signalDeleteURLFromModel, this, &MainWindow::refreshButtons));
+    VERIFY(connect(pModel, &DownloadCollectionModel::activeDownloadsNumberChanged, this, &MainWindow::onActiveDownloadsNumberChanged));
     connect(pModel, &DownloadCollectionModel::overallProgress, this, &MainWindow::onOverallProgress);
 
     m_dlManager = new DownloadManager(this);
-    VERIFY(connect(m_dlManager, SIGNAL(updateButtons()), SLOT(refreshButtons())));
+    VERIFY(connect(m_dlManager, &DownloadManager::updateButtons, this, &MainWindow::refreshButtons));
 
     ui->listUrls->setItemDelegate(new DownloadCollectionDelegate(this));
     ui->listUrls->setModel(pModel);
 
     ui->actionPaste_Links->setShortcut(QKeySequence::Paste);
 
-    VERIFY(connect(ui->listUrls, SIGNAL(signalOpenFolder(QString)), SLOT(onButtonOpenFolderClicked(QString))));
-    VERIFY(connect(ui->listUrls, SIGNAL(signalOpenTorrentFolder(QString,QString)), SLOT(openTorrentDownloadFolder(QString,QString))));
-    VERIFY(connect(ui->listUrls, SIGNAL(signalButtonChangePauseImage(bool,bool,bool,bool)), SLOT(onChangePauseCancelState(bool,bool,bool,bool))));
-    VERIFY(connect(ui->listUrls, SIGNAL(signalDownloadFinished(QString)), SLOT(showTrayNotifDwnldFinish(QString))));
+    VERIFY(connect(ui->listUrls, &DownloadCollectionTreeView::signalOpenFolder, this, &MainWindow::onButtonOpenFolderClicked));
+    VERIFY(connect(ui->listUrls, &DownloadCollectionTreeView::signalOpenTorrentFolder, this, &MainWindow::openTorrentDownloadFolder));
+    VERIFY(connect(ui->listUrls, &DownloadCollectionTreeView::signalButtonChangePauseImage, this, &MainWindow::onChangePauseCancelState));
+    VERIFY(connect(ui->listUrls, &DownloadCollectionTreeView::signalDownloadFinished, this, &MainWindow::showTrayNotifDwnldFinish));
 
-    VERIFY(connect(ui->actionOpen, SIGNAL(triggered()), SLOT(on_openTorrent_clicked())));
-    VERIFY(connect(ui->actionClose_Link, SIGNAL(triggered()), SLOT(onActionCloseLinkClicked())));
-    VERIFY(connect(ui->actionExit_Link, SIGNAL(triggered()), SLOT(closeApp())));
-    VERIFY(connect(ui->actionPaste_Links, SIGNAL(triggered()), SLOT(on_buttonPaste_clicked())));
-    VERIFY(connect(ui->actionPause_selected, SIGNAL(triggered()), SLOT(on_pauseButton_clicked())));
-    VERIFY(connect(ui->actionCancel_selected, SIGNAL(triggered()), SLOT(on_cancelButton_clicked())));
-    VERIFY(connect(ui->actionStart, SIGNAL(triggered()), SLOT(on_startButton_clicked())));
-    //    VERIFY(connect(ui->actionStop, SIGNAL(triggered()), SLOT(on_stopButton_clicked())));
+    VERIFY(connect(ui->actionOpen, &QAction::triggered, this, &MainWindow::on_openTorrent_clicked));
+    VERIFY(connect(ui->actionClose_Link, &QAction::triggered, this, &MainWindow::onActionCloseLinkClicked));
+    VERIFY(connect(ui->actionExit_Link, &QAction::triggered, this, &MainWindow::closeApp));
+    VERIFY(connect(ui->actionPaste_Links, &QAction::triggered, this, &MainWindow::on_buttonPaste_clicked));
+    VERIFY(connect(ui->actionPause_selected, &QAction::triggered, this, &MainWindow::on_pauseButton_clicked));
+    VERIFY(connect(ui->actionCancel_selected, &QAction::triggered, this, &MainWindow::on_cancelButton_clicked));
+    VERIFY(connect(ui->actionStart, &QAction::triggered, this, &MainWindow::on_startButton_clicked));
+    //    VERIFY(connect(ui->actionStop, &QAction::triggered, this, &MainWindow::on_stopButton_clicked));
 
-    VERIFY(connect(ui->actionAbout_LIII, SIGNAL(triggered()), SLOT(onAboutClicked())));
+    VERIFY(connect(ui->actionAbout_LIII, &QAction::triggered, this, &MainWindow::onAboutClicked));
 
-    VERIFY(connect(ui->actionStartAllDownloads, SIGNAL(triggered()), ui->listUrls, SLOT(resumeAllItems())));
-    VERIFY(connect(ui->actionPauseAllDownloads, SIGNAL(triggered()), ui->listUrls, SLOT(pauseAllItems())));
-    //    VERIFY(connect(ui->actionStopAllDownloads, SIGNAL(triggered()), ui->listUrls, SLOT(stopAllItems())));
-    VERIFY(connect(ui->buttonOpenFolder, SIGNAL(clicked()), SLOT(onButtonOpenFolderClicked())));
+    VERIFY(connect(ui->actionStartAllDownloads, &QAction::triggered, ui->listUrls, &DownloadCollectionTreeView::resumeAllItems));
+    VERIFY(connect(ui->actionPauseAllDownloads, &QAction::triggered, ui->listUrls, &DownloadCollectionTreeView::pauseAllItems));
+    //    VERIFY(connect(ui->actionStopAllDownloads, &QAction::triggered, ui->listUrls, &DownloadCollectionTreeView::stopAllItems));
+    VERIFY(connect(ui->buttonOpenFolder, &QAbstractButton::clicked, this, [this]() { onButtonOpenFolderClicked(); }));
 
-    VERIFY(connect(ui->actionFind, SIGNAL(triggered()), SLOT(onFind())));
-    VERIFY(connect(ui->actionSelect_Completed, SIGNAL(triggered()), SLOT(onSelectCompleted())));
-    VERIFY(connect(ui->actionInvert_Selection, SIGNAL(triggered()), SLOT(onInvertSelection())));
+    VERIFY(connect(ui->actionFind, &QAction::triggered, this, &MainWindow::onFind));
+    VERIFY(connect(ui->actionSelect_Completed, &QAction::triggered, this, &MainWindow::onSelectCompleted));
+    VERIFY(connect(ui->actionInvert_Selection, &QAction::triggered, this, &MainWindow::onInvertSelection));
 
 #ifdef Q_OS_MAC
-    VERIFY(connect(&DarwinSingleton::Instance(), SIGNAL(showPreferences()), SLOT(on_buttonOptions_clicked())));
-    VERIFY(connect(&DarwinSingleton::Instance(), SIGNAL(showAbout()), SLOT(onAboutClicked())));
-    VERIFY(connect(&DarwinSingleton::Instance(), SIGNAL(addTorrent(QStringList)), SLOT(openTorrent(QStringList))));
+    VERIFY(connect(&DarwinSingleton::Instance(), &DarwinSingleton::showPreferences, this, &MainWindow::on_buttonOptions_clicked));
+    VERIFY(connect(&DarwinSingleton::Instance(), &DarwinSingleton::showAbout, this, &MainWindow::onAboutClicked));
+    VERIFY(connect(&DarwinSingleton::Instance(), &DarwinSingleton::addTorrent, this, &MainWindow::openTorrent));
 
     ui->menuFile->menuAction()->setVisible(false);
     ui->menuTools->menuAction()->setVisible(false);
@@ -181,13 +181,13 @@ MainWindow::MainWindow()
     ui->actionClose_Link->setShortcut(QKeySequence("Cmd+W"));
 #endif //Q_OS_MAC
 
-    VERIFY(connect(ui->actionPreferences, SIGNAL(triggered()), SLOT(on_buttonOptions_clicked())));
+    VERIFY(connect(ui->actionPreferences, &QAction::triggered, this, &MainWindow::on_buttonOptions_clicked));
 
     populateTrayMenu();
 
-    VERIFY(connect(ui->linkEdit, SIGNAL(linksAdd(bool)), ui->lblClearText, SLOT(setVisible(bool))));
-    VERIFY(connect(ui->linkEdit, SIGNAL(returnPressed()), SLOT(on_buttonStart_clicked())));
-    VERIFY(connect(ui->lblClearText, SIGNAL(clicked()), SLOT(onlblClearTextClicked())));
+    VERIFY(connect(ui->linkEdit, &LineEditEx::linksAdd, ui->lblClearText, &QWidget::setVisible));
+    VERIFY(connect(ui->linkEdit, &QLineEdit::returnPressed, this, &MainWindow::on_buttonStart_clicked));
+    VERIFY(connect(ui->lblClearText, &ButtonLabel::clicked, this, &MainWindow::onlblClearTextClicked));
 
     refreshButtons();
 
@@ -212,7 +212,7 @@ void MainWindow::showMainWindowAndPerformChecks()
     readPositionSettings();
 
     m_dlManager->startLoad();
-    VERIFY(connect(qApp, SIGNAL(aboutToQuit()), SLOT(prepareToExit())));
+    VERIFY(connect(qApp, &QApplication::aboutToQuit, this, &MainWindow::prepareToExit));
 
     refreshButtons();
 
