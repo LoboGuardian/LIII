@@ -334,8 +334,9 @@ if(NOT WIN32 AND NOT APPLE)
 	set(CPACK_PACKAGE_VERSION_PATCH     "${PROJECT_VERSION_PATCH}")
 	set(CPACK_PACKAGE_INSTALL_DIRECTORY "${PROJECT_NAME}")
 
+	set(CPACK_GENERATOR                 "RPM;DEB")
+
 	# RPM specific
-	set(CPACK_GENERATOR                 "RPM")
 	set(CPACK_RPM_PACKAGE_LICENSE       "GPL-2.0")
 	set(CPACK_RPM_PACKAGE_GROUP         "Applications/Internet")
 	set(CPACK_RPM_PACKAGE_URL           "https://github.com/${PROJECT_COMPANYNAME}/${PROJECT_NAME}")
@@ -343,7 +344,20 @@ if(NOT WIN32 AND NOT APPLE)
 		"qt5-qtbase >= 5.12, qt5-qtwayland, boost >= 1.50, openssl, zlib"
 	)
 	set(CPACK_RPM_PACKAGE_DESCRIPTION
-		"LIII is a multi-platform BitTorrent client built with Qt5 and libtorrent-rasterbar."
+		"Multi-platform BitTorrent client built with Qt5 and libtorrent-rasterbar."
+	)
+
+	# DEB specific
+	set(CPACK_DEBIAN_PACKAGE_MAINTAINER  "${PROJECT_COMPANYNAME}")
+	set(CPACK_DEBIAN_PACKAGE_SECTION     "net")
+	set(CPACK_DEBIAN_PACKAGE_DEPENDS
+		"qtbase5-dev (>= 5.12), libboost-system-dev (>= 1.50), libssl-dev, zlib1g-dev"
+	)
+	set(CPACK_DEBIAN_PACKAGE_DESCRIPTION
+		"Multi-platform BitTorrent client built with Qt5 and libtorrent-rasterbar."
+	)
+	set(CPACK_DEBIAN_PACKAGE_HOMEPAGE
+		"https://github.com/${PROJECT_COMPANYNAME}/${PROJECT_NAME}"
 	)
 
 	include(CPack)
