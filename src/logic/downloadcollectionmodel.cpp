@@ -16,7 +16,6 @@
 #include "globals.h"
 #include "utilities/errorcode.h"
 
-#include "utilities/customutf8codec.h"
 #include "utilities/filesaveguard.h"
 #include "branding.hxx"
 
@@ -982,8 +981,6 @@ void DownloadCollectionModel::saveToFile()
     if (fileSafer.isTempFileNoError() && output.open(QIODevice::WriteOnly))
     {
         QXmlStreamWriter stream(&output);
-
-        stream.setCodec(utilities::CustomUtf8Codec::Instance());
 
         stream.setAutoFormatting(true);
         stream.writeStartDocument();

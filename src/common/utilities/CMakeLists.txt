@@ -37,7 +37,6 @@ set(HEADERS
 	iparentadvice.h
 	instantiator.h
 	patricia.h
-	customutf8codec.h
 	associate_app.h
 	windowsfirewall.h
 	filesaveguard.h
@@ -56,7 +55,6 @@ set(SOURCES
 	modelserializer.cpp
 	modeldeserializer.cpp
 	modelserializecommon.cpp
-	customutf8codec.cpp
 	windowsfirewall.cpp
 	filesystem_utils.cpp
 	simplecrypt.cpp
