@@ -1,5 +1,6 @@
 #include "mainwindowwithtray.h"
 #include "utilities/translation.h"
+#include "utilities/utils.h"
 
 #include <QApplication>
 #include <QEvent>
@@ -174,11 +175,17 @@ void MainWindowWithTray::restore()
     {
         setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
     }
-#else
-    setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
-#endif
     show();
     raise();
+#else
+    if (utilities::isWayland())
+        setWindowState(windowState() & ~Qt::WindowMinimized);
+    else
+        setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    show();
+    if (!utilities::isWayland())
+        raise();
+#endif
     QApplication::alert(this);
 }
 
