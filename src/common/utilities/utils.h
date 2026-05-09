@@ -4,6 +4,7 @@
 #include <QList>
 #include <QMap>
 #include <QRegExp>
+#include <QGuiApplication>
 #ifdef Q_OS_MAC
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
@@ -113,5 +114,11 @@ void runWithPrivileges(const wchar_t* arg, WId parent);
 #endif
 
 QMainWindow* getMainWindow();
+
+inline bool isWayland()
+{
+    static const bool wayland = QGuiApplication::platformName() == "wayland";
+    return wayland;
+}
 
 } // namespace utilities
