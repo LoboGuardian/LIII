@@ -6,7 +6,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QTranslator>
-#include <QRegExp>
+
 
 namespace utilities
 {

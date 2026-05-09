@@ -4,6 +4,7 @@
 #include <QTranslator>
 #include <QDir>
 #include <QStringList>
+#include <QRegularExpression>
 #include "translation.h"
 #include <algorithm>
 
@@ -24,7 +25,7 @@ QString getTranslationsFolder()
     const auto translations = QDir(QApplication::applicationDirPath()).absoluteFilePath("translations");
     return QFileInfo::exists(translations)? translations : QApplication::applicationDirPath();
 #elif defined(Q_OS_MAC)
-    QStringList binPathList = QApplication::applicationDirPath().split(QDir::separator(), QString::SkipEmptyParts);
+    QStringList binPathList = QApplication::applicationDirPath().split(QDir::separator(), Qt::SkipEmptyParts);
     binPathList.removeLast();
     binPathList <<  "Resources" << "Translations";
     return  binPathList.join(QDir::separator()).prepend(QDir::separator());
@@ -73,10 +74,11 @@ QString locationString(const QString& fileName)
     QString locName;
 
     // parse location from filenames like LIII_en(-us)?.qm ONLY
-    QRegExp rx(R"(^.+_(\S{2}(?:-\S{2})?)\.qm$)", Qt::CaseInsensitive);
-    if (rx.exactMatch(fileName))
+    QRegularExpression rx(R"(^.+_(\S{2}(?:-\S{2})?)\.qm$)", QRegularExpression::CaseInsensitiveOption);
+    auto match = rx.match(fileName);
+    if (match.hasMatch())
     {
-        locName = rx.cap(1).toLower();
+        locName = match.captured(1).toLower();
     }
 
     return locName;

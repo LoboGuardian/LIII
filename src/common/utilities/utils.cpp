@@ -1,5 +1,7 @@
 #include "utils.h"
 
+#include <QRegularExpression>
+
 #if defined(Q_OS_WIN)
 #include <windows.h>
 #include <winsock2.h>
@@ -107,7 +109,7 @@ const int kOffsetPastSeparator[kNumberOfPrefixes] = { 3, 3, 4, 3, 3, 2 };
 
 QStringList ParseUrls(const QString& data)
 {
-    const QStringList list = data.split(QRegExp("[\\s\\\"\\n]+"), QString::SkipEmptyParts);
+    const QStringList list = data.split(QRegularExpression("[\\s\\\"\\n]+"), Qt::SkipEmptyParts);
     QStringList res;
     for (const auto& v : list)
     {
@@ -140,7 +142,7 @@ QStringList ParseUrls(const QString& data)
         {
             t = url.toString();
         }
-        else if (QRegExp("^[a-z]:[\\\\/]|^/|^~/", Qt::CaseInsensitive).indexIn(t) == -1)
+        else if (!QRegularExpression("^[a-z]:[\\\\/]|^/|^~/", QRegularExpression::CaseInsensitiveOption).match(t).hasMatch())
         {
             continue;
         }

@@ -12,6 +12,7 @@
 #include <QDesktopServices>
 #include <QString>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 #ifdef Q_OS_WIN
 #include <windows.h>
@@ -254,10 +255,11 @@ QString GetFileName(QNetworkReply* reply)
         if (!filename.isEmpty())
         {
             QString disposition = QString::fromUtf8(filename.constData());
-            QRegExp rx(R"(filename\s?=\s?\"?([^\"]+))");
-            if (rx.indexIn(disposition) != -1)
+            QRegularExpression rx(R"(filename\s?=\s?\"?([^\"]+))");
+            auto match = rx.match(disposition);
+            if (match.hasMatch())
             {
-                result = rx.cap(1);
+                result = match.captured(1);
             }
         }
     }
