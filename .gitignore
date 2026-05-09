@@ -225,6 +225,7 @@ Output/
 _CPack_Packages/
 *.rpm
 *.deb
+*.exe
 
 #################
 ## Qt Creator
