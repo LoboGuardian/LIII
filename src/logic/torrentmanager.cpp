@@ -18,6 +18,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDebug>
+#include <QRegularExpression>
 #include <QByteArray>
 #include <QDir>
 #include <QFile>
@@ -140,10 +141,11 @@ QString torrentRootItemPath(const libtorrent::torrent_handle& handle)
 
 QString btihFromMaget(const QString& magnet)
 {
-    QRegExp btihRx("magnet:(?:.*)(?:\\?|&)xt=urn:btih:([a-z0-9]+)[&\\n\\r]?", Qt::CaseInsensitive);
-    if (btihRx.indexIn(magnet) != -1)
+    QRegularExpression btihRx("magnet:(?:.*)(?:\\?|&)xt=urn:btih:([a-z0-9]+)[&\\n\\r]?", QRegularExpression::CaseInsensitiveOption);
+    auto match = btihRx.match(magnet);
+    if (match.hasMatch())
     {
-        QString btih = btihRx.cap(1);
+        QString btih = match.captured(1);
         return btih.size() == 40 ? btih : QString();
     }
 
@@ -153,12 +155,12 @@ QString btihFromMaget(const QString& magnet)
 std::vector<libtorrent::announce_entry> parseTrackersList(const QString& torrOrMagnet)
 {
     std::vector<libtorrent::announce_entry> trackers_new;
-    QRegExp trackersRx("&tr(?:.[0-9]+)?=([^&\\n\\r]+)", Qt::CaseInsensitive);
-    int pos = 0;
-    while ((pos = trackersRx.indexIn(torrOrMagnet, pos)) != -1)
+    QRegularExpression trackersRx("&tr(?:.[0-9]+)?=([^&\\n\\r]+)", QRegularExpression::CaseInsensitiveOption);
+    auto it = trackersRx.globalMatch(torrOrMagnet);
+    while (it.hasNext())
     {
-        trackers_new.emplace_back(trackersRx.cap(1).toUtf8().constData());
-        pos += trackersRx.matchedLength();
+        auto match = it.next();
+        trackers_new.emplace_back(match.captured(1).toUtf8().constData());
     }
     return trackers_new;
 }

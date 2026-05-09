@@ -54,6 +54,6 @@ void processMessageReceived(const QString& cmdLine)
     {
         treatParams(
             static_cast<MainWindow*>(utilities::getMainWindow()),
-            cmdLine.split('\n', QString::SkipEmptyParts));
+            cmdLine.split('\n', Qt::SkipEmptyParts));
     }
 }

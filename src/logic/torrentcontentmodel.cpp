@@ -3,6 +3,7 @@
 #include "torrentslistener.h"
 
 #include <QDir>
+#include <QRegularExpression>
 
 namespace {
 
@@ -282,7 +283,7 @@ void TorrentContentModel::setupModelData(const libtorrent::torrent_info& t, cons
         QString path = QString::fromStdString(fentry.path);
 
         // Iterate of parts of the path to create necessary folders
-        QStringList pathFolders = path.split(QRegExp("[/\\\\]"), QString::SkipEmptyParts);
+        QStringList pathFolders = path.split(QRegularExpression("[/\\\\]"), Qt::SkipEmptyParts);
         pathFolders.removeLast();
         for (const QString& pathPart : qAsConst(pathFolders))
         {
