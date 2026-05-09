@@ -22,7 +22,7 @@ NetworkReplyAdaptor::NetworkReplyAdaptor(QHttpNetworkReply* parent)
     , replyPrivate(static_cast<QHttpNetworkReplyPrivate*>(static_cast<QConnectionObjectEx*>(static_cast<QObject*>(parent))->dFunc()))
     , threadDelegate(static_cast<QHttpThreadDelegatePublic*>(parent->parent()))
 {
-    VERIFY(connect(this, SIGNAL(readyRead()), threadDelegate, SLOT(readyReadSlot())));
+    VERIFY(connect(this, &NetworkReplyAdaptor::readyRead, threadDelegate, &QHttpThreadDelegate::readyReadSlot));
 }
 
 void NetworkReplyAdaptor::readyReadSlot()

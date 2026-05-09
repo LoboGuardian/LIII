@@ -4,7 +4,7 @@
 TorrentContentFilterModel::TorrentContentFilterModel(QObject* parent)
     : QSortFilterProxyModel(parent), m_model(new TorrentContentModel(this))
 {
-    VERIFY(connect(m_model, SIGNAL(filteredFilesChanged()), SIGNAL(filteredFilesChanged())));
+    VERIFY(connect(m_model, &TorrentContentModel::filteredFilesChanged, this, &TorrentContentFilterModel::filteredFilesChanged));
     setSourceModel(m_model);
     // Filter settings
     setFilterCaseSensitivity(Qt::CaseInsensitive);

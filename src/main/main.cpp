@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
     w.showMainWindowAndPerformChecks();
 
     app.setActivationWindow(&w);
-    VERIFY(QObject::connect(&app, SIGNAL(messageReceived(QString)), &w, SLOT(restore())));
+    VERIFY(QObject::connect(&app, &QtSingleApplication::messageReceived, &w, &ui_utils::MainWindowWithTray::restore));
 
     int retcode = Application::exec();
 

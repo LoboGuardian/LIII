@@ -11,7 +11,7 @@ LoginDialog::LoginDialog(QWidget* parent) :
     QIcon icon(PROJECT_ICON);
     setWindowIcon(icon);
 
-    connect(m_ui->buttonBox, SIGNAL(accepted()), SLOT(on_buttonBox_accepted()));
+    connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, &LoginDialog::on_buttonBox_accepted);
 }
 
 LoginDialog::~LoginDialog()

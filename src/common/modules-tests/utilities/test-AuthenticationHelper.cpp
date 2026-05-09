@@ -19,7 +19,7 @@ void Test_AuthenticationHelper::init()
 	Q_ASSERT(pAuth_);
 
 	pHelper_ = new utilities::AuthenticationHelper;
-	QVERIFY(connect(pHelper_, SIGNAL(authNeedLogin(utilities::ICredentialsRetriever*)), this, SLOT(authNeedLogin(utilities::ICredentialsRetriever*))));
+	QVERIFY(connect(pHelper_, &utilities::AuthenticationHelper::authNeedLogin, this, &Test_AuthenticationHelper::authNeedLogin));
 }
 
 void Test_AuthenticationHelper::constructor()
@@ -76,7 +76,7 @@ void Test_AuthenticationHelper::getWebAuthentication_multi()
 }
 void Test_AuthenticationHelper::cleanup()
 {
-	QVERIFY(disconnect(pHelper_, SIGNAL(authNeedLogin(utilities::ICredentialsRetriever*)), this, SLOT(authNeedLogin(utilities::ICredentialsRetriever*))));
+	QVERIFY(disconnect(pHelper_, &utilities::AuthenticationHelper::authNeedLogin, this, &Test_AuthenticationHelper::authNeedLogin));
 
 	delete pHelper_;
 	pHelper_ = nullptr;

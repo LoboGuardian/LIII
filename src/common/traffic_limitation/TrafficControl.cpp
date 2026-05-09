@@ -102,9 +102,9 @@ bool handleSocketReadNotify(QObject* receiver, QEvent* e)
 
                                 if (!replyPrivate->downstreamLimited)
                                 {
-                                    VERIFY(QObject::disconnect(channel->reply, SIGNAL(readyRead()), delegate, SLOT(readyReadSlot())));
+                                    VERIFY(QObject::disconnect(channel->reply, &QHttpNetworkReply::readyRead, static_cast<QHttpThreadDelegate*>(delegate), &QHttpThreadDelegate::readyReadSlot));
                                     auto networkReplyAdaptor = new NetworkReplyAdaptor(channel->reply);
-                                    VERIFY(QObject::connect(tcpSocket, SIGNAL(readyRead()), networkReplyAdaptor, SLOT(readyReadSlot())));
+                                    VERIFY(QObject::connect(tcpSocket, &QTcpSocket::readyRead, networkReplyAdaptor, &NetworkReplyAdaptor::readyReadSlot));
 
                                     replyPrivate->downstreamLimited = true;
                                 }

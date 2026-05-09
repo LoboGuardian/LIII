@@ -7,7 +7,7 @@ LineEditEx::LineEditEx(QWidget* parent) :
     QLineEdit(parent) ,
     m_state(sNormal)
 {
-    VERIFY(connect(this, SIGNAL(textChanged(QString)), SLOT(on_linkAdd(QString))));
+    VERIFY(connect(this, &QLineEdit::textChanged, this, &LineEditEx::on_linkAdd));
 }
 
 void LineEditEx::on_linkAdd(const QString& val)
