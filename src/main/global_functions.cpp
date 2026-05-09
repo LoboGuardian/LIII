@@ -6,7 +6,7 @@
 #include <set>
 
 #include <QStringList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QVariant>
 #include <QNetworkRequest>
 #include <QUrl>
@@ -55,7 +55,7 @@ void openFile(const QString& filename, QWidget* parent)
 QString GetVideoFolder()
 {
     QString fixedFolder = QSettings().value(VideoFolder).toString().trimmed();
-    QStringList pathItems = fixedFolder.split(QRegExp("[/\\\\]+"), QString::SkipEmptyParts);
+    QStringList pathItems = fixedFolder.split(QRegularExpression("[/\\\\]+"), Qt::SkipEmptyParts);
 
     fixedFolder = fixedFolder.isEmpty() ?
         utilities::getPathForDownloadFolder() :
