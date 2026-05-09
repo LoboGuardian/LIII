@@ -300,8 +300,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::onAboutClicked()
 {
-    raise();
-    activateWindow();
+    if (!utilities::isWayland())
+    {
+        raise();
+        activateWindow();
+    }
     QMessageBox::about(
         this,
         QString(::Tr::Tr(ABOUT_TITLE)).arg(PROJECT_NAME),
@@ -407,8 +410,11 @@ void MainWindow::addLinks(QStringList urls)
 
 void MainWindow::on_buttonOptions_clicked()
 {
-    raise();
-    activateWindow();
+    if (!utilities::isWayland())
+    {
+        raise();
+        activateWindow();
+    }
 
     Preferences prefDlg(this, Preferences::GENERAL);
     connect(&prefDlg, &Preferences::newPreferencesApply, m_dlManager, &DownloadManager::siftDownloads);
