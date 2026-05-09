@@ -70,16 +70,16 @@ void AddTorrentForm::initialize()
     ui->treeTorrentContent->setModel(m_contentModel);
 
     // Setting up other saving path stuffs
-    VERIFY(connect(ui->savePathButton, SIGNAL(clicked()), SLOT(browseSavePath())));
-    VERIFY(connect(ui->savePathLineEdit, SIGNAL(textEdited(QString)), SLOT(savePathEdited(QString))));
-    VERIFY(connect(ui->selectNoneButton, SIGNAL(clicked()), SLOT(selectNone())));
-    VERIFY(connect(ui->selectAllButton, SIGNAL(clicked()), SLOT(selectAll())));
+    VERIFY(connect(ui->savePathButton, &QPushButton::clicked, this, &AddTorrentForm::browseSavePath));
+    VERIFY(connect(ui->savePathLineEdit, &QLineEdit::textEdited, this, &AddTorrentForm::savePathEdited));
+    VERIFY(connect(ui->selectNoneButton, &QPushButton::clicked, this, &AddTorrentForm::selectNone));
+    VERIFY(connect(ui->selectAllButton, &QPushButton::clicked, this, &AddTorrentForm::selectAll));
 
 
     auto* contentDelegate = new PropListDelegate(this);
     ui->treeTorrentContent->setItemDelegate(contentDelegate);
-    VERIFY(connect(ui->treeTorrentContent, SIGNAL(clicked(const QModelIndex&)), 
-        ui->treeTorrentContent, SLOT(edit(const QModelIndex&))));
+    VERIFY(connect(ui->treeTorrentContent, &QAbstractItemView::clicked, 
+        ui->treeTorrentContent, &QAbstractItemView::edit));
 
     // List files in torrent
     m_contentModel->model()->setupModelData(*m_torrentInfo, libtorrent::torrent_status());
@@ -91,8 +91,8 @@ void AddTorrentForm::initialize()
         ui->lblDate->setText(QDateTime::fromTime_t(*dt).toString("dd/MM/yyyy hh:mm"));
     }
     updateDiskSpaceLabel();
-    VERIFY(connect(m_contentModel->model(), SIGNAL(filteredFilesChanged()), SLOT(updateDiskSpaceLabel())));
-    VERIFY(connect(m_contentModel->model(), SIGNAL(filteredFilesChanged()), SLOT(checkAcceptAvailable())));
+    VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, this, &AddTorrentForm::updateDiskSpaceLabel));
+    VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, this, &AddTorrentForm::checkAcceptAvailable));
 
     // Expand root folder
     ui->treeTorrentContent->setExpanded(m_contentModel->index(0, 0), true);

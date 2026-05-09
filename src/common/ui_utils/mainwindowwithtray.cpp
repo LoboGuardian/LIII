@@ -112,8 +112,8 @@ void MainWindowWithTray::createTrayMenu(QIcon const& icon, utilities::Tr::Transl
     m_tray = new QSystemTrayIcon(this);
     utilities::Tr::SetTr(m_tray, &QSystemTrayIcon::setToolTip, projFullNameTr);
     m_tray->setIcon(icon);
-    VERIFY(connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(trayAction(QSystemTrayIcon::ActivationReason))));
-    VERIFY(connect(m_tray, SIGNAL(messageClicked()), SLOT(restore())));
+    VERIFY(connect(m_tray, &QSystemTrayIcon::activated, this, &MainWindowWithTray::trayAction));
+    VERIFY(connect(m_tray, &QSystemTrayIcon::messageClicked, this, &MainWindowWithTray::restore));
     m_tray->setContextMenu(new QMenu(this)); // TODO: doubt if need this
     m_tray->show();
 #endif
@@ -133,12 +133,12 @@ QAction* MainWindowWithTray::addTrayMenuItem(TrayMenu::ItemType itemType)
     switch (itemType)
     {
     case TrayMenu::Exit:
-        action = createAction("actionExit", appExitTr, QKeySequence::Quit, SLOT(closeApp()));
+        action = createAction("actionExit", appExitTr, QKeySequence::Quit, &MainWindowWithTray::closeApp);
         m_tray->contextMenu()->addAction(action);
         break;
     case TrayMenu::Show:
     {
-        action = createAction("actionShow", appShowTr, QKeySequence::UnknownKey, SLOT(restore()));
+        action = createAction("actionShow", appShowTr, QKeySequence::UnknownKey, &MainWindowWithTray::restore);
         action->setIcon(QApplication::windowIcon());
         action->setIconVisibleInMenu(true);
         m_tray->contextMenu()->addAction(action);
@@ -189,7 +189,7 @@ void MainWindowWithTray::restore()
     QApplication::alert(this);
 }
 
-QAction* MainWindowWithTray::createAction(const char* actName, utilities::Tr::Translation translation, const QKeySequence& shortcut, const char* onTriggered)
+QAction* MainWindowWithTray::createAction(const char* actName, utilities::Tr::Translation translation, const QKeySequence& shortcut, void (MainWindowWithTray::*onTriggered)())
 {
     auto* action = new QAction(this);
     action->setObjectName(actName);
@@ -197,7 +197,7 @@ QAction* MainWindowWithTray::createAction(const char* actName, utilities::Tr::Tr
     action->setIconVisibleInMenu(false);
     action->setShortcut(shortcut);
     utilities::Tr::SetTr(action, &QAction::setText, translation, PROJECT_NAME);
-    VERIFY(connect(action, SIGNAL(triggered()), onTriggered));
+    VERIFY(connect(action, &QAction::triggered, this, onTriggered));
     return action;
 }
 

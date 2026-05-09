@@ -68,8 +68,8 @@ void TorrentDetailsForm::initialize()
     }
 
     // Setting up other saving path stuffs
-    VERIFY(connect(ui->savePathButton, SIGNAL(clicked()), SLOT(browseSavePath())));
-    VERIFY(connect(ui->savePathEdit, SIGNAL(textEdited(QString)), SLOT(savePathEdited(QString))));
+    VERIFY(connect(ui->savePathButton, &QPushButton::clicked, this, &TorrentDetailsForm::browseSavePath));
+    VERIFY(connect(ui->savePathEdit, &QLineEdit::textEdited, this, &TorrentDetailsForm::savePathEdited));
 
     connect(this, &TorrentDetailsForm::updateFilesProgress,
         this, &TorrentDetailsForm::onUpdateFilesProgress);
@@ -103,7 +103,7 @@ void TorrentDetailsForm::initPeersInfoTab()
     ui->peersView->setRootIsDecorated(false);
     ui->peersView->setModel(m_PeersInfoproxy);
     ui->peersView->setSortingEnabled(true);
-    VERIFY(connect(ui->peersView->header(), SIGNAL(sectionDoubleClicked(int)), SLOT(adaptColumns(int))));
+    VERIFY(connect(ui->peersView->header(), &QHeaderView::sectionDoubleClicked, this, &TorrentDetailsForm::adaptColumns));
     ui->peersView->setSortingEnabled(true);
 
     const bool autoRefresh = QSettings().value(
@@ -135,7 +135,7 @@ void TorrentDetailsForm::initTorrentContentTab()
 
     auto* contentDelegate = new PropListDelegate(this);
     ui->treeTorrentContent->setItemDelegate(contentDelegate);
-    VERIFY(connect(ui->treeTorrentContent, SIGNAL(expanded(QModelIndex)), SLOT(onItemExpanded(QModelIndex))));
+    VERIFY(connect(ui->treeTorrentContent, &QTreeView::expanded, this, &TorrentDetailsForm::onItemExpanded));
 
     // List files in torrent
     m_contentModel->model()->setupModelData(*m_torrentInfo, (m_torrentHandle.is_valid() ? m_torrentHandle.status(0) : libtorrent::torrent_status()));
@@ -163,8 +163,8 @@ void TorrentDetailsForm::initTorrentContentTab()
     ui->treeTorrentContent->header()->resizeSection(TorrentContentModelItem::COL_STATUS, 88);
     ui->treeTorrentContent->header()->resizeSection(TorrentContentModelItem::COL_PROGRESS, 100);
 
-    VERIFY(connect(m_contentModel->model(), SIGNAL(filteredFilesChanged()), SLOT(updateDiskSpaceLabel())));
-    VERIFY(connect(m_contentModel->model(), SIGNAL(filteredFilesChanged()), ui->treeTorrentContent, SLOT(updateEditorData())));
+    VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, this, &TorrentDetailsForm::updateDiskSpaceLabel));
+    VERIFY(connect(m_contentModel->model(), &TorrentContentModel::filteredFilesChanged, ui->treeTorrentContent, &QAbstractItemView::updateEditorData));
 
     ui->treeTorrentContent->header()->setSortIndicator(TorrentContentModelItem::COL_NAME, Qt::AscendingOrder);
 }
