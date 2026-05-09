@@ -416,8 +416,6 @@ add_executable(${PROJECT_NAME}
 	${DESKTOP_TARGET}
 	main/main.cpp
 
-	# Generated resources
-	${QRC_RESOURCES}
 	${RESOURCE_OS}
 	${RESOURCE_OS_ALL}
 )
@@ -499,10 +497,6 @@ endif()
 ###  SECTION Post Build
 ###################################################
 
-get_target_property(BINARY_FILE ${PROJECT_NAME} LOCATION)
-get_filename_component(BINARY_PATH ${BINARY_FILE} PATH)
-
-
 # Start to install
 install(TARGETS ${PROJECT_NAME} DESTINATION ${BINARY_INSTALL_DIR})
 INSTALL_TRANSLATIONS(${PROJECT_NAME} ${QM_FILES})
@@ -510,10 +504,10 @@ INSTALL_TRANSLATIONS(${PROJECT_NAME} ${QM_FILES})
 if(WIN32)
 	add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 		COMMAND 
-			mt -manifest "${CMAKE_SOURCE_DIR}/resources/win7.manifest" -outputresource:"${BINARY_FILE}"
+			mt -manifest "${CMAKE_SOURCE_DIR}/resources/win7.manifest" -outputresource:"$<TARGET_FILE:${PROJECT_NAME}>"
 		COMMAND
 			if EXIST "${CMAKE_SOURCE_DIR}/sign/${PROJECT_FULLNAME}/Cert.pfx"(
-			signtool sign /v /f "${CMAKE_SOURCE_DIR}/sign/${PROJECT_FULLNAME}/Cert.pfx" "${BINARY_FILE}")
+			signtool sign /v /f "${CMAKE_SOURCE_DIR}/sign/${PROJECT_FULLNAME}/Cert.pfx" "$<TARGET_FILE:${PROJECT_NAME}>")
 	)
 endif(WIN32)
 
