@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.0)
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+    set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+endif()
+
 if(POLICY CMP0020)
 	cmake_policy(SET CMP0020 NEW)
 endif(POLICY CMP0020)
